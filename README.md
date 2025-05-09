@@ -28,5 +28,5 @@ A simple and modern To-Do List web application built with **HTML, CSS, and JavaS
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/USERNAME/To-Do-List-Web-App.git
-   cd To-Do-List-Web-App
+   git clone https://github.com/aleeyytodo/SafeDo
+   cd SafeDo
