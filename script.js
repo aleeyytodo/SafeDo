@@ -1,64 +1,88 @@
-// Ambil referensi elemen
-const taskInput = document.getElementById("task-input");
-const taskList = document.getElementById("task-list");
+let tasks = [];
 
-// Muat tugas dari localStorage saat halaman dimuat
-window.onload = loadTasks;
+document.addEventListener('DOMContentLoaded', () => {
+    loadTasks();
+    renderTasks();
+});
 
-function loadTasks() {
-  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  tasks.forEach(task => {
-    addTaskToList(task.text, task.completed);
-  });
+function addTask() {
+    const taskInput = document.getElementById("task-input");
+    const taskText = taskInput.value.trim();
+    if (taskText !== "") {
+        tasks.push({ text: taskText, finished: false });
+        saveTasks();
+        renderTasks();
+        taskInput.value = "";
+    }
+}
+
+function toggleTask(index) {
+    tasks[index].finished = !tasks[index].finished;
+    saveTasks();
+    renderTasks();
+}
+
+function deleteTask(index) {
+    tasks.splice(index, 1);
+    saveTasks();
+    renderTasks();
+}
+
+function renderTasks(filter = 'all') {
+    const taskList = document.getElementById("task-list");
+    taskList.innerHTML = "";
+
+    tasks.forEach((task, index) => {
+        if (
+            filter === "unfinished" && task.finished ||
+            filter === "finished" && !task.finished
+        ) return;
+
+        const li = document.createElement("li");
+
+        const span = document.createElement("span");
+        span.textContent = task.text;
+        span.style.textDecoration = task.finished ? "line-through" : "none";
+        span.onclick = () => toggleTask(index);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "❌";
+        deleteBtn.onclick = (e) => {
+            e.stopPropagation();
+            deleteTask(index);
+        };
+
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "✏️";
+        editBtn.onclick = (e) => {
+            e.stopPropagation();
+            const newText = prompt("Edit tugas:", task.text);
+            if (newText !== null && newText.trim() !== "") {
+                tasks[index].text = newText.trim();
+                saveTasks();
+                renderTasks(filter);
+            }
+        };
+
+        li.appendChild(span);
+        li.appendChild(editBtn);
+        li.appendChild(deleteBtn);
+        taskList.appendChild(li);
+    });
+}
+
+
+function filterTasks(filter) {
+    renderTasks(filter);
 }
 
 function saveTasks() {
-  const tasks = [];
-  document.querySelectorAll("li").forEach(li => {
-    tasks.push({
-      text: li.textContent,
-      completed: li.classList.contains("completed"),
-    });
-  });
-  localStorage.setItem("tasks", JSON.stringify(tasks));
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
-function addTask() {
-  const taskText = taskInput.value.trim();
-  if (taskText === "") return;
-
-  addTaskToList(taskText, false);
-  taskInput.value = "";
-  saveTasks();
-}
-
-function addTaskToList(text, completed) {
-  const li = document.createElement("li");
-  li.textContent = text;
-  if (completed) li.classList.add("completed");
-
-  li.addEventListener("click", () => {
-    li.classList.toggle("completed");
-    saveTasks();
-  });
-
-  li.addEventListener("dblclick", () => {
-    li.remove();
-    saveTasks();
-  });
-
-  taskList.appendChild(li);
-}
-
-function filterTasks(filter) {
-    const tasks = document.querySelectorAll("li");
-    tasks.forEach(task => {
-        if (filter == "all") {
-            task.style.display = "list-item";
-        } else if (filter == "finished"){
-            task.style.display = task.classList.contains("completed") ? "list-item" : "none";
-        } else if (filter == "unfinished") {
-            task.style.display = task.classList.contains("completed") ? "none" : "list-item";
-        }
-    })
+function loadTasks() {
+    const stored = localStorage.getItem("tasks");
+    if (stored) {
+        tasks = JSON.parse(stored);
+    }
 }

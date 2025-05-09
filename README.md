@@ -1,13 +1,32 @@
-# To-Do List Web App
-Aplikasi to-do list sederhana berbasis web menggunakan HTML, CSS, dan JavaScript. 
-Aplikasi ini memungkinkan pengguna untuk menambahkan, menyelesaikan, dan menghapus tugas.
+# 📝 To-Do List Web App
 
-## Fitur
- - Tambah tugas baru
- - Klik satu kali untuk menandai tugas selesai
- - Klik dua kali untuk menghapus tugas
- - Desain Responsif dan ringan
- - Tugas disimpan di browser menggunakan LocalStorage
+A simple and modern To-Do List web application built with **HTML, CSS, and JavaScript**.
 
-## Cara menjalankan 
-Clone repository berikut :
+> Created as a personal learning project and for a university course in Cyber Security Engineering.
+
+---
+
+## 🎯 Features
+
+- ✅ Add new tasks
+- ✅ Mark tasks as completed
+- ✅ Edit tasks ✏️
+- ✅ Delete tasks ❌
+- ✅ Filter by All / Finished / Unfinished
+- ✅ Persistent storage using `localStorage`
+- ✅ Responsive and modern UI design
+
+---
+
+## 🖥️ Preview
+
+<img src="screenshot.png" width="100%" alt="screenshot">
+
+---
+
+## 🚀 How to Run Locally
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/USERNAME/To-Do-List-Web-App.git
+   cd To-Do-List-Web-App
