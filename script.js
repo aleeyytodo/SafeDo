@@ -1,88 +1,89 @@
 let tasks = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadTasks();
-    renderTasks();
+  loadTasks();
+  renderTasks();
 });
 
 function addTask() {
-    const taskInput = document.getElementById("task-input");
-    const taskText = taskInput.value.trim();
-    if (taskText !== "") {
-        tasks.push({ text: taskText, finished: false });
-        saveTasks();
-        renderTasks();
-        taskInput.value = "";
-    }
+  const input = document.getElementById("task-input");
+  const text = input.value.trim();
+  if (text !== "") {
+    tasks.push({ text, finished: false });
+    saveTasks();
+    renderTasks();
+    input.value = "";
+  }
 }
 
 function toggleTask(index) {
-    tasks[index].finished = !tasks[index].finished;
-    saveTasks();
-    renderTasks();
+  tasks[index].finished = !tasks[index].finished;
+  saveTasks();
+  renderTasks();
 }
 
 function deleteTask(index) {
-    tasks.splice(index, 1);
+  tasks.splice(index, 1);
+  saveTasks();
+  renderTasks();
+}
+
+function editTask(index) {
+  const newText = prompt("Edit task:", tasks[index].text);
+  if (newText !== null && newText.trim() !== "") {
+    tasks[index].text = newText.trim();
     saveTasks();
     renderTasks();
+  }
 }
 
-function renderTasks(filter = 'all') {
-    const taskList = document.getElementById("task-list");
-    taskList.innerHTML = "";
+function renderTasks() {
+  const taskList = document.getElementById("task-list");
+  taskList.innerHTML = "";
 
-    tasks.forEach((task, index) => {
-        if (
-            filter === "unfinished" && task.finished ||
-            filter === "finished" && !task.finished
-        ) return;
+  tasks.forEach((task, index) => {
+    const li = document.createElement("li");
+    if (task.finished) li.classList.add("done");
 
-        const li = document.createElement("li");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = task.finished;
+    checkbox.onclick = () => toggleTask(index);
 
-        const span = document.createElement("span");
-        span.textContent = task.text;
-        span.style.textDecoration = task.finished ? "line-through" : "none";
-        span.onclick = () => toggleTask(index);
+    const span = document.createElement("span");
+    span.textContent = task.text;
 
-        const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "❌";
-        deleteBtn.onclick = (e) => {
-            e.stopPropagation();
-            deleteTask(index);
-        };
+    const actions = document.createElement("div");
+    actions.classList.add("task-actions");
 
-        const editBtn = document.createElement("button");
-        editBtn.textContent = "✏️";
-        editBtn.onclick = (e) => {
-            e.stopPropagation();
-            const newText = prompt("Edit tugas:", task.text);
-            if (newText !== null && newText.trim() !== "") {
-                tasks[index].text = newText.trim();
-                saveTasks();
-                renderTasks(filter);
-            }
-        };
+    const editBtn = document.createElement("button");
+    editBtn.innerHTML = "✏️";
+    editBtn.title = "Edit";
+    editBtn.onclick = () => editTask(index);
 
-        li.appendChild(span);
-        li.appendChild(editBtn);
-        li.appendChild(deleteBtn);
-        taskList.appendChild(li);
-    });
-}
+    const deleteBtn = document.createElement("button");
+    deleteBtn.innerHTML = "🗑️";
+    deleteBtn.title = "Delete";
+    deleteBtn.onclick = () => deleteTask(index);
 
+    actions.appendChild(editBtn);
+    actions.appendChild(deleteBtn);
 
-function filterTasks(filter) {
-    renderTasks(filter);
+    li.appendChild(checkbox);
+    li.appendChild(span);
+    li.appendChild(actions);
+
+    taskList.appendChild(li);
+  });
 }
 
 function saveTasks() {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+  localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 function loadTasks() {
-    const stored = localStorage.getItem("tasks");
-    if (stored) {
-        tasks = JSON.parse(stored);
-    }
+  const stored = localStorage.getItem("tasks");
+  if (stored) {
+    tasks = JSON.parse(stored);
+  }
 }
